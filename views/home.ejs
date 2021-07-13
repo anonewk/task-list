@@ -1,0 +1,59 @@
+<!DOCTYPE>
+<html>
+<head>
+    <title>Tasks Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-10 card shadow mx-auto mt-3">
+            <div class="card-header text-center bg-dark text-light">
+                <h2>Liste des tâches en cours</h2>
+            </div>
+            <a href="/task/new" class="btn btn-success floating-right my-2">Ajouter</a>
+            <div class="card-content">
+                <table class="table">
+                    <thead class="table-dark">
+                    <tr>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% tasksListView.forEach((task, index) => { %>
+                        <tr id="tr-<%= index%>">
+                            <td><%= task.label %></td>
+                            <td><%= task.desc %></td>
+                            <td><%= task.status %></td>
+                            <td>
+                                <button id="btn-delete-<%= index %>" class="brn btn-danger ">
+                                    Supprimer
+                                </button>
+                            </td>
+                        </tr>
+                    <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const deleteBtns = document.querySelectorAll('[id^=btn-delete-]')
+    deleteBtns.forEach((btn, index) => {
+        btn.addEventListener('click', (e) => {
+            const index = e.target.id.split('-')[2]
+            const params = { method: 'DELETE'}
+
+            fetch(`/task/remove/${index}`, params)
+                .then((res) => res.json())
+                .then((res) => {
+                    if(res.message === 'success'){
+                        document.querySelector(`#tr-${index}`).remove();
+                    }
+                })
+        })
+    })
+</script>
+</body>
+</html>
